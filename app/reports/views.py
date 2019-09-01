@@ -47,8 +47,6 @@ class ReportManageView(generics.GenericAPIView):
                         user=self.request.user)
                     )
             elif report_type == "monthly":
-
-                print("Month", month)
                 if self.request.user.is_superuser:
                     query_result = (Report.objects.values('user__email')
                                     .annotate(total_hits=Count('name'),
