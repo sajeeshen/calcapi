@@ -8,7 +8,6 @@ class ReportManageSerializer(serializers.ModelSerializer):
     month = serializers.DateTimeField(read_only=True, format="%Y-%m")
     total_hits = serializers.IntegerField()
 
-
     class Meta:
 
         model = Report

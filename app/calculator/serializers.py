@@ -17,4 +17,15 @@ class CalculatorSerializer(serializers.Serializer):
         action_parameter = validated_data.get('action_parameter')
         return Report.objects.create(user=user,
                                      request_query=action_parameter,
+
                                      name=action_name)
+
+    def validate(self, data):
+
+        try:
+            self.first_num = int(data.get('x'))
+            self.second_num = int(data.get('y'))
+        except Exception as err:
+            raise serializers.ValidationError("Cant process, "
+                                              "please check the input")
+        return data

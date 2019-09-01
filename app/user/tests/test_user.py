@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 
-CREATE_USER_URL = reverse('user:user-register')
+CREATE_USER_URL = reverse('user:register')
 TOKEN_URL = reverse('user:token')
 ME_URL = reverse('user:profile')
 
@@ -30,7 +30,6 @@ class PublicUserApiTests(TestCase):
             'last_name': 'Last NAme'
         }
         res = self.client.post(CREATE_USER_URL, payload)
-
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         user = get_user_model().objects.get(**res.data)
         self.assertTrue(user.check_password(payload['password']))

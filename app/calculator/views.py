@@ -33,7 +33,9 @@ class Calculator(generics.GenericAPIView):
         :param args:
         :return:
         """
-        self.admin_required = request.resolver_match.kwargs.get('admin_required')
+
+        self.admin_required = request.\
+            resolver_match.kwargs.get('admin_required')
 
         for permission in self.get_permissions():
             if not permission.has_permission(request, self):
@@ -54,8 +56,8 @@ class Calculator(generics.GenericAPIView):
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            x = self.request.data.get('x', '')
-            y = self.request.data.get('y', '')
+            x = self.request.data.get('x', 0)
+            y = self.request.data.get('y', 0)
             action_parameter = {'x': x, 'y': y}
             serializer.save(user=request.user,
                             action_name=operation,

@@ -5,7 +5,7 @@ from reports import serializers
 from rest_framework.authentication import TokenAuthentication
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
-from core.models import Report, User
+from core.models import Report
 from reports.utility import get_current_month
 from reports.utility import get_current_year
 from django.http import HttpResponse
@@ -34,17 +34,19 @@ class ReportManageView(generics.GenericAPIView):
             query_result = None
             if report_type == "daily":
                 if self.request.user.is_superuser:
-                    query_result = (Report.objects.values('user__email')
-                                    .annotate(total_hits=Count('name'),
-                                              month=TruncMonth('created_at'))
-                                    .filter(created_at__date=datetime.now().date())
+                    query_result = (
+                        Report.objects.values('user__email')
+                            .annotate(total_hits=Count('name'),
+                                      month=TruncMonth('created_at'))
+                            .filter(created_at__date=datetime.now().date())
                                     )
                 else:
-                    query_result = (Report.objects.values('user__email')
-                        .annotate(total_hits=Count('name'),
-                                  month=TruncMonth('created_at')).filter(
-                        created_at__date=datetime.now().date(),
-                        user=self.request.user)
+                    query_result = (
+                        Report.objects.values('user__email')
+                            .annotate(total_hits=Count('name'),
+                                      month=TruncMonth('created_at'))
+                            .filter(created_at__date=datetime.now().date(),
+                                    user=self.request.user)
                     )
             elif report_type == "monthly":
                 if self.request.user.is_superuser:
@@ -81,9 +83,7 @@ class ReportManageView(generics.GenericAPIView):
                     )
             return query_result
 
-
         def get(self, request, report_type, month=None, year=None):
-
             if month is None:
                 month = get_current_month()
             if year is None:
@@ -93,7 +93,8 @@ class ReportManageView(generics.GenericAPIView):
             rows = self.get_queryset(month, year, report_type)
             serializer = serializers.ReportManageSerializer(rows, many=True)
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="export.csv"'
+            response['Content-Disposition'] = \
+                'attachment; filename="export.csv"'
             header = serializers.ReportManageSerializer.Meta.fields
 
             writer = csv.DictWriter(response, fieldnames=header)

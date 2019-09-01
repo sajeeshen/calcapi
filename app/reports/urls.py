@@ -6,7 +6,7 @@ app_name = 'reports'
 
 urlpatterns = [
     path('daily/', views.ReportManageView.as_view(),
-         {'report_type': 'daily'} ,name='daily'),
+         {'report_type': 'daily'}, name='daily'),
     path('monthly/<int:month>/<int:year>',
          views.ReportManageView.as_view(),
          {'report_type': 'monthly'}, name='monthly'),
