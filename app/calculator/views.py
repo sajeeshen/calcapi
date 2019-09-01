@@ -68,7 +68,13 @@ class Calculator(generics.GenericAPIView):
                                              "please check the input")
 
     def do_calculation(self, operation, x, y):
-
+        """
+        This function for the calculation part
+        :param operation: string
+        :param x: int
+        :param y: int
+        :return: int
+        """
         operator = self.get_operator((operation))[0]['operator']
         ops = {
             '+': lambda x, y: x + y,
@@ -81,6 +87,11 @@ class Calculator(generics.GenericAPIView):
         return ops[operator](int(x), int(y))
 
     def get_operator(self, operator):
+        """
+        Get the operator from the Available options object
+        :param operator:
+        :return:
+        """
 
         return [obj for obj in AVAILABLE_ACTIONS
                 if obj['action'] == operator.lower()]

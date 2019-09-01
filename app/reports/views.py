@@ -23,7 +23,14 @@ class ReportManageView(generics.GenericAPIView):
         queryset = Report.objects.all()
 
         def get_queryset(self, month, year, report_type):
-
+            """
+            Based on the permission and the report type
+            filter the result and return
+            :param month: int
+            :param year: int
+            :param report_type: srting
+            :return: object
+            """
             query_result = None
             if report_type == "daily":
                 if self.request.user.is_superuser:

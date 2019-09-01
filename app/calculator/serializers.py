@@ -11,6 +11,7 @@ class CalculatorSerializer(serializers.Serializer):
         exclude = ('id',)
 
     def create(self, validated_data):
+        """ Extract the custom data and Save it into the Report"""
         user = validated_data.pop('user')
         action_name = validated_data.get('action_name')
         action_parameter = validated_data.get('action_parameter')
