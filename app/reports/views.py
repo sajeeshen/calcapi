@@ -33,54 +33,32 @@ class ReportManageView(generics.GenericAPIView):
             """
             query_result = None
             if report_type == "daily":
-                if self.request.user.is_superuser:
-                    query_result = (
-                        Report.objects.values('user__email')
-                            .annotate(total_hits=Count('name'),
-                                      month=TruncMonth('created_at'))
-                            .filter(created_at__date=datetime.now().date())
-                                    )
-                else:
-                    query_result = (
-                        Report.objects.values('user__email')
-                            .annotate(total_hits=Count('name'),
-                                      month=TruncMonth('created_at'))
-                            .filter(created_at__date=datetime.now().date(),
-                                    user=self.request.user)
-                    )
+
+                query_result = (
+                    Report.objects.values('user__email')
+                        .annotate(total_hits=Count('name'),
+                                  month=TruncMonth('created_at'))
+                        .filter(created_at__date=datetime.now().date())
+                )
+
             elif report_type == "monthly":
-                if self.request.user.is_superuser:
-                    query_result = (Report.objects.values('user__email')
-                                    .annotate(total_hits=Count('name'),
-                                              month=TruncMonth('created_at'))
-                                    .filter(created_at__month=int(month),
-                                            created_at__year=int(year))
-                                    )
-                else:
-                    query_result = (Report.objects.values('user__email')
-                                    .annotate(total_hits=Count('name'),
-                                              month=TruncMonth('created_at'))
-                                    .filter(created_at__month=int(month),
-                                            created_at__year=int(year),
-                                            user=self.request.user)
-                                    )
+                query_result = (Report.objects.values('user__email')
+                                .annotate(total_hits=Count('name'),
+                                          month=TruncMonth('created_at'))
+                                .filter(created_at__month=int(month),
+                                        created_at__year=int(year))
+                                )
+
+
             elif report_type == "yearly":
-                if self.request.user.is_superuser:
-                    query_result = (
-                        Report.objects.values('user__email')
-                            .annotate(total_hits=Count('name'),
-                                      month=TruncMonth('created_at')).filter(
-                            created_at__year=int(year))
-                    )
-                else:
-                    query_result = (
-                        Report.objects.values('user__email')
-                            .annotate(total_hits=Count('name'),
-                                      month=TruncMonth('created_at'))
-                            .filter(
-                            created_at__year=int(year),
-                            user=self.request.user)
-                    )
+                query_result = (
+                    Report.objects.values('user__email')
+                        .annotate(total_hits=Count('name'),
+                                  month=TruncMonth('created_at')).filter(
+                        created_at__year=int(year))
+                )
+
+
             return query_result
 
         def get(self, request, report_type, month=None, year=None):
@@ -91,6 +69,8 @@ class ReportManageView(generics.GenericAPIView):
 
             self.report_type = report_type
             rows = self.get_queryset(month, year, report_type)
+            if not self.request.user.is_superuser:
+                rows = rows.filter(user=self.request.user)
             serializer = serializers.ReportManageSerializer(rows, many=True)
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = \
