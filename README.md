@@ -12,7 +12,7 @@ docker-compose build
 Then run makemigrations 
 
 ```bash
-docker-compose run app sh -c "python manage.py makemigrations calculator"
+docker-compose run app sh -c "python manage.py makemigrations"
 
 ```
 Then migrate 
